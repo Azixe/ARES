@@ -1,0 +1,36 @@
+# ============================================================
+# ARES — Adaptive Reasoning Executive System
+# Configuration
+# ============================================================
+
+llm:
+  provider: deepseek
+  model: deepseek-v4-pro
+  api_key: ""                                    # Leave empty — use .env file or ARES_API_KEY env var
+  base_url: "https://api.deepseek.com"
+  max_tokens: 2048
+  temperature: 0.7
+  streaming: true
+
+personality:
+  directory: app/personality
+
+memory:
+  max_conversation_turns: 20           # Keep last N exchanges in context
+
+vision:
+  enabled: false
+
+voice:
+  tts_enabled: false
+  stt_enabled: false
+
+ui:
+  theme: dark
+  title: "ARES"
+  width: 900
+  height: 700
+
+logging:
+  level: INFO
+  directory: logs

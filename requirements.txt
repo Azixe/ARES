@@ -1,0 +1,20 @@
+# ARES - Adaptive Reasoning Executive System
+# Phase 1 MVP Dependencies
+
+# UI Framework - Native desktop window with web renderer
+pywebview>=6.0,<7.0
+
+# LLM API - OpenAI-compatible SDK (works with DeepSeek)
+openai>=1.30,<2.0
+
+# Configuration
+pyyaml>=6.0,<7.0
+python-dotenv>=1.0,<2.0
+
+# === Future Dependencies (Phase 2+) ===
+# chromadb              # RAG vector database
+# sentence-transformers # Local embeddings
+# faster-whisper        # Speech-to-text
+# piper-tts             # Text-to-speech
+# mss                   # Screenshot capture
+# Pillow                # Image processing
