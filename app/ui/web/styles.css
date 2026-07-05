@@ -224,6 +224,56 @@ body {
     transform: scale(0.95);
 }
 
+/* === METRICS BAR === */
+.metrics-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 4px 20px;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    user-select: none;
+    overflow: hidden;
+}
+
+.metric {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.metric svg {
+    opacity: 0.5;
+    flex-shrink: 0;
+}
+
+.metric-separator {
+    width: 1px;
+    height: 12px;
+    background: var(--border-strong);
+    flex-shrink: 0;
+}
+
+.metric-window {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.metric-window span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    max-width: 400px;
+}
+
 /* === CHAT AREA === */
 #chat-area {
     flex: 1;

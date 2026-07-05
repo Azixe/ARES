@@ -18,6 +18,12 @@
         statusText: document.getElementById('status-text'),
         modelInfo: document.getElementById('model-info'),
         turnCount: document.getElementById('turn-count'),
+        // Metrics
+        metricCpu: document.getElementById('metric-cpu'),
+        metricRam: document.getElementById('metric-ram'),
+        metricBattery: document.getElementById('metric-battery'),
+        metricBatteryContainer: document.getElementById('metric-battery-container'),
+        metricWindow: document.getElementById('metric-window'),
     };
 
     // === STATE ===
@@ -26,6 +32,7 @@
         currentResponseEl: null,
         currentResponseText: '',
         messageCount: 0,
+        metricsInterval: null,
     };
 
     // === MARKDOWN RENDERER (lightweight) ===
@@ -343,16 +350,56 @@
         if (window.pywebview && window.pywebview.api) {
             pywebview.api.get_config_display().then(function (config) {
                 if (config) {
-                    elements.modelInfo.textContent = config.model || '—';
+                    elements.modelInfo.textContent = config.model || '\u2014';
                     if (!config.has_key) {
                         addErrorMessage(
-                            'No API key configured. Add your DeepSeek API key to config.yaml ' +
-                            'or set the ARES_API_KEY environment variable.'
+                            'No API key configured. Set ARES_API_KEY in your .env file ' +
+                            'or as an environment variable.'
                         );
                     }
                 }
             });
+
+            // Start desktop metrics polling
+            updateDesktopMetrics();
+            state.metricsInterval = setInterval(updateDesktopMetrics, 3000);
         }
+    }
+
+    function updateDesktopMetrics() {
+        if (!window.pywebview || !window.pywebview.api) return;
+
+        pywebview.api.get_desktop_info().then(function (info) {
+            if (!info) return;
+
+            // CPU
+            if (elements.metricCpu && typeof info.cpu_percent !== 'undefined') {
+                elements.metricCpu.textContent = 'CPU ' + info.cpu_percent + '%';
+            }
+
+            // RAM
+            if (elements.metricRam && typeof info.ram_percent !== 'undefined') {
+                elements.metricRam.textContent = 'RAM ' + info.ram_used_gb + '/' + info.ram_total_gb + 'GB';
+            }
+
+            // Battery (show only if present)
+            if (info.battery_percent !== null && typeof info.battery_percent !== 'undefined') {
+                if (elements.metricBatteryContainer) {
+                    elements.metricBatteryContainer.style.display = 'flex';
+                }
+                if (elements.metricBattery) {
+                    var plugIcon = info.battery_plugged ? ' \u26A1' : '';
+                    elements.metricBattery.textContent = info.battery_percent + '%' + plugIcon;
+                }
+            }
+
+            // Active window
+            if (elements.metricWindow && info.active_window) {
+                elements.metricWindow.textContent = info.active_window;
+            }
+        }).catch(function () {
+            // Silently ignore metrics errors
+        });
     }
 
     // === INITIALIZATION ===

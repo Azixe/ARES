@@ -22,6 +22,7 @@ class PromptBuilder:
         self,
         conversation_history: list[dict],
         current_time: str | None = None,
+        desktop_context: str | None = None,
         memories: list[str] | None = None,
         screenshot_description: str | None = None,
     ) -> list[dict]:
@@ -31,6 +32,7 @@ class PromptBuilder:
             conversation_history: List of {"role": str, "content": str} dicts.
                 Should already include the latest user message.
             current_time: ISO timestamp string.
+            desktop_context: Formatted desktop awareness string.
             memories: Retrieved RAG context strings.
             screenshot_description: Description of a captured screenshot.
 
@@ -50,6 +52,10 @@ class PromptBuilder:
         # Current time
         if current_time:
             system_parts.append(f"## Current Time\n{current_time}")
+
+        # Desktop awareness
+        if desktop_context:
+            system_parts.append(f"## Desktop Environment\n{desktop_context}")
 
         # Retrieved memories (RAG context)
         if memories:

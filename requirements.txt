@@ -7,6 +7,9 @@ pywebview>=6.0,<7.0
 # LLM API - OpenAI-compatible SDK (works with DeepSeek)
 openai>=1.30,<2.0
 
+# Desktop Awareness
+psutil>=5.9,<8.0
+
 # Configuration
 pyyaml>=6.0,<7.0
 python-dotenv>=1.0,<2.0

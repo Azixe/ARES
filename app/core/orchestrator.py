@@ -13,6 +13,7 @@ from app.llm.providers.deepseek import DeepSeekProvider
 from app.personality.engine import PersonalityEngine
 from app.memory.manager import MemoryManager
 from app.core.prompt_builder import PromptBuilder
+from app.desktop.awareness import DesktopAwareness
 
 logger = logging.getLogger('ares.core')
 
@@ -32,6 +33,7 @@ class Orchestrator:
         self.memory = MemoryManager(settings.memory.max_conversation_turns)
         self.prompt_builder = PromptBuilder(self.personality)
         self.llm: LLMProvider = self._init_llm()
+        self.desktop = DesktopAwareness()
 
         logger.info("Orchestrator initialized — all modules online")
 
@@ -67,10 +69,12 @@ class Orchestrator:
         # Store user message
         self.memory.add_message('user', user_message)
 
-        # Build prompt
+        # Build prompt with desktop context
+        desktop_context = self.desktop.format_context()
         messages = self.prompt_builder.build(
             conversation_history=self.memory.get_history(),
             current_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            desktop_context=desktop_context,
         )
 
         # Generate response
@@ -96,10 +100,12 @@ class Orchestrator:
         # Store user message
         self.memory.add_message('user', user_message)
 
-        # Build prompt
+        # Build prompt with desktop context
+        desktop_context = self.desktop.format_context()
         messages = self.prompt_builder.build(
             conversation_history=self.memory.get_history(),
             current_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            desktop_context=desktop_context,
         )
 
         # Stream response and collect full text
@@ -123,3 +129,7 @@ class Orchestrator:
             'has_api_key': bool(self.settings.llm.api_key),
             'personality_sections': self.personality.get_section_names(),
         }
+
+    def get_desktop_snapshot(self) -> dict:
+        """Return a full desktop awareness snapshot."""
+        return self.desktop.get_snapshot()

@@ -99,3 +99,27 @@ class AresAPI:
             'has_key': bool(self.orchestrator.settings.llm.api_key),
             'streaming': self.orchestrator.settings.llm.streaming,
         }
+
+    def get_desktop_info(self):
+        """Get desktop awareness data for UI display. Called from JavaScript."""
+        try:
+            snapshot = self.orchestrator.get_desktop_snapshot()
+            # Simplify for UI consumption
+            res = snapshot.get('resources', {})
+            win = snapshot.get('active_window', {})
+            apps = snapshot.get('running_apps', [])
+
+            return {
+                'cpu_percent': res.get('cpu_percent', 0),
+                'ram_percent': res.get('ram_percent', 0),
+                'ram_used_gb': res.get('ram_used_gb', 0),
+                'ram_total_gb': res.get('ram_total_gb', 0),
+                'battery_percent': res.get('battery_percent'),
+                'battery_plugged': res.get('battery_plugged'),
+                'active_window': win.get('title', ''),
+                'active_process': win.get('process', ''),
+                'app_count': len(apps),
+            }
+        except Exception as e:
+            logger.error(f"Desktop info failed: {e}")
+            return {}
